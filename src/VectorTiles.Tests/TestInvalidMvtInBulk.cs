@@ -33,7 +33,7 @@ namespace VectorTiles.Tests
 		[ATestClassSetup]
 		protected void SetUp()
 		{
-			_fixturesPath = Path.Combine(_executingFolder, "..", "..", "..", "test", "mvt-fixtures", "fixtures", "invalid");
+			_fixturesPath = Path.Combine(_executingFolder, "..", "test", "mvt-fixtures", "fixtures", "invalid");
 		}
 
 		[ATestMethod, Order(1)]
@@ -69,7 +69,7 @@ namespace VectorTiles.Tests
 	{
 		public static IEnumerable GetInValidFixtureFileName()
 		{
-			string path = Path.Combine(BulkInvalidMvtTests._executingFolder, "..", "..", "..", "test", "mvt-fixtures", "fixtures", "invalid");
+			string path = Path.Combine(BulkInvalidMvtTests._executingFolder, "..", "test", "mvt-fixtures", "fixtures", "invalid");
 
 			foreach (var file in Directory.GetFiles(path))
 			{
