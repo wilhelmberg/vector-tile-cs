@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Bench</RootNamespace>
     <AssemblyName>Bench</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -86,10 +86,6 @@
     <ProjectReference Include="..\ExtensionMethods\ExtensionMethods.csproj">
       <Project>{55503403-0083-4ed8-b618-f8377610b225}</Project>
       <Name>ExtensionMethods</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VectorTileReader\VectorTileReader.csproj">
-      <Project>{4656b308-1492-4a22-a73e-06bf6aa858f2}</Project>
-      <Name>VectorTileReader</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

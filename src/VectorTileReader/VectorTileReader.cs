@@ -1,17 +1,13 @@
+using Mapbox.VectorTile.Constants;
+using Mapbox.VectorTile.Geometry;
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Text;
-using Mapbox.VectorTile.Contants;
-using Mapbox.VectorTile.Geometry;
-
-#if !NET20
 using System.Linq;
-#endif
+using System.Text;
 
 namespace Mapbox.VectorTile {
-
-
 
 
 	/// <summary>
@@ -85,13 +81,7 @@ namespace Mapbox.VectorTile {
 		/// </summary>
 		/// <returns>Collection of layer names</returns>
 		public ReadOnlyCollection<string> LayerNames() {
-#if NET20 || PORTABLE || WINDOWS_UWP
-			string[] lyrNames = new string[_Layers.Keys.Count];
-			_Layers.Keys.CopyTo(lyrNames, 0);
-			return new ReadOnlyCollection<string>(lyrNames);
-#else
 			return _Layers.Keys.ToList().AsReadOnly();
-#endif
 		}
 
 		/// <summary>
@@ -209,8 +199,6 @@ namespace Mapbox.VectorTile {
 				}
 
 
-				//TODO: find equivalent of 'Distinct()' for NET20
-#if !NET20
 				if (layer.Keys.Count != layer.Keys.Distinct().Count()) {
 					string[] keys = layer.Keys
 						.GroupBy(v => v)
@@ -235,7 +223,7 @@ namespace Mapbox.VectorTile {
 					);
 				}
 				if (layer.Values.Count != layer.Values.Distinct().Count()) {
-					string[] vals =layer.Values
+					string[] vals = layer.Values
 						.GroupBy(v => v)
 						.Where(g => g.Count() > 1)
 						.Select(g => $"value:[{g.Key}] count:[{g.Count()}]")
@@ -251,7 +239,6 @@ namespace Mapbox.VectorTile {
 						)
 					);
 				}
-#endif
 			}
 
 			return layer;
@@ -293,11 +280,7 @@ namespace Mapbox.VectorTile {
 						feat.Id = (ulong)featureReader.Varint();
 						break;
 					case FeatureType.Tags:
-#if NET20
-						List<int> tags = featureReader.GetPackedUnit32().ConvertAll<int>(ui => (int)ui);
-#else
 						List<int> tags = featureReader.GetPackedUnit32().Select(t => (int)t).ToList();
-#endif
 						feat.Tags = tags;
 						break;
 					case FeatureType.Type:
@@ -334,22 +317,8 @@ namespace Mapbox.VectorTile {
 					throw new System.Exception(string.Format("Layer [{0}]: uneven number of feature tag ids", layer.Name));
 				}
 				if (feat.Tags.Count > 0) {
-#if NET20
-					int maxKeyIndex = -9999;
-					int tagCount = feat.Tags.Count;
-					for (int i = 0; i < tagCount; i += 2)
-					{
-						if (feat.Tags[i] > maxKeyIndex) { maxKeyIndex = feat.Tags[i]; }
-					}
-					int maxValueIndex = -9999;
-					for (int i = 1; i < tagCount; i += 2)
-					{
-						if (feat.Tags[i] > maxValueIndex) { maxValueIndex = feat.Tags[i]; }
-					}
-#else
 					int maxKeyIndex = feat.Tags.Where((key, idx) => idx % 2 == 0).Max();
 					int maxValueIndex = feat.Tags.Where((key, idx) => (idx + 1) % 2 == 0).Max();
-#endif
 					if (maxKeyIndex >= layer.Keys.Count) {
 						throw new System.Exception(string.Format("Layer [{0}]: maximum key index equal or greater number of key elements", layer.Name));
 					}

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mapbox.VectorTile.Contants;
+using Mapbox.VectorTile.Constants;
 
 namespace Mapbox.VectorTile.Geometry
 {
@@ -36,8 +36,8 @@ namespace Mapbox.VectorTile.Geometry
 		)
 		{
 
-			List<List<Point2d<long>>> geomOut = new List<List<Point2d<long>>>();
-			List<Point2d<long>> geomTmp = new List<Point2d<long>>();
+			List<List<Point2d<long>>> geomOut = new();
+			List<Point2d<long>> geomTmp = new();
 			long cursorX = 0;
 			long cursorY = 0;
 
@@ -53,7 +53,7 @@ namespace Mapbox.VectorTile.Geometry
 				{
 					for (int j = 0; j < cmdCount; j++)
 					{
-						Point2d<long> delta = zigzagDecode(geometryCommands[i + 1], geometryCommands[i + 2]);
+						Point2d<long> delta = ZigzagDecode(geometryCommands[i + 1], geometryCommands[i + 2]);
 						cursorX += delta.X;
 						cursorY += delta.Y;
 						i += 2;
@@ -65,7 +65,7 @@ namespace Mapbox.VectorTile.Geometry
 						}
 
 						//Point2d pntTmp = new Point2d(cursorX, cursorY);
-						Point2d<long> pntTmp = new Point2d<long>()
+						Point2d<long> pntTmp = new()
 						{
 							X = cursorX,
 							Y = cursorY
@@ -104,10 +104,10 @@ namespace Mapbox.VectorTile.Geometry
 		)
 		{
 
-			List<List<Point2d<T>>> outGeom = new List<List<Point2d<T>>>();
+			List<List<Point2d<T>>> outGeom = new();
 			foreach (var inPart in inGeom)
 			{
-				List<Point2d<T>> outPart = new List<Point2d<T>>();
+				List<Point2d<T>> outPart = new();
 				foreach (var inVertex in inPart)
 				{
 					float fX = ((float)inVertex.X) * scale;
@@ -143,7 +143,7 @@ namespace Mapbox.VectorTile.Geometry
 			return outGeom;
 		}
 
-		private static Point2d<long> zigzagDecode(long x, long y)
+		private static Point2d<long> ZigzagDecode(long x, long y)
 		{
 
 			//TODO: verify speed improvements using

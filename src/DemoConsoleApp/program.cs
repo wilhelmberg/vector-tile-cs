@@ -29,7 +29,7 @@ namespace Mapbox.VectorTile {
 				} else if (argLow.Contains("out:")) {
 					outGeoJson = argLow.Replace("out:", "").Equals("geojson");
 				} else if (argLow.Contains("tileid:")) {
-					parseArg(argLow.Replace("tileid:", ""), out zoom, out tileCol, out tileRow);
+					ParseArg(argLow.Replace("tileid:", ""), out zoom, out tileCol, out tileRow);
 				} else if (argLow.Contains("novalidate")) {
 					validate = false;
 				}
@@ -37,28 +37,28 @@ namespace Mapbox.VectorTile {
 
 			if (!File.Exists(vtIn)) {
 				Console.WriteLine($"file [{vtIn}] not found");
-				usage();
+				Usage();
 				return 1;
 			}
 
 			// z-x-y weren't passed via parameters, try to get them from file name
 			if (!zoom.HasValue || !tileCol.HasValue || !tileRow.HasValue) {
-				if (!parseArg(Path.GetFileName(vtIn), out zoom, out tileCol, out tileRow)) {
-					usage();
+				if (!ParseArg(Path.GetFileName(vtIn), out zoom, out tileCol, out tileRow)) {
+					Usage();
 					return 1;
 				}
 			}
 
 			var bufferedData = File.ReadAllBytes(vtIn);
 
-			VectorTile tile = new VectorTile(bufferedData, validate);
+			VectorTile tile = new(bufferedData, validate);
 
 			if (outGeoJson) {
 				Console.WriteLine(tile.ToGeoJson(zoom.Value, tileCol.Value, tileRow.Value, clipBuffer));
 			} else {
 				foreach (string lyrName in tile.LayerNames()) {
 					VectorTileLayer lyr = tile.GetLayer(lyrName);
-					Console.WriteLine(string.Format("------------ {0} ---------", lyrName));
+					Console.WriteLine(string.Format("------------ LAYER: {0} ---------", lyrName));
 					//if (lyrName != "building") { continue; }
 					int featCnt = lyr.FeatureCount();
 					for (int i = 0; i < featCnt; i++) {
@@ -75,21 +75,21 @@ namespace Mapbox.VectorTile {
 			return 0;
 		}
 
-		private static void usage() {
+		private static void Usage() {
 
 			Console.WriteLine("");
 			Console.WriteLine("DemoConsoleApp.exe vt:<tile.mvt> <other parameters>");
 			Console.WriteLine("");
 			Console.WriteLine("- vt:<path/to/vector/tile.mvt> or vt:<path/to/<z>-<x>-<y>.tile.mvt>");
-			Console.WriteLine("- clip:<buffer>           to clip geometries extending beyong the tile border");
-			Console.WriteLine("- out:<geojson|metadata>  to ouput either GeoJson or some metadata");
+			Console.WriteLine("- clip:<buffer>           to clip geometries extending beyond the tile border");
+			Console.WriteLine("- out:<geojson|metadata>  to output either GeoJson or some metadata");
 			Console.WriteLine("- tileid:<z>-<x>-<y>      to pass tile id if not contained within the file name");
 			Console.WriteLine("- novalidate              ignore tile errors");
 			Console.WriteLine("");
 			Console.WriteLine("");
 		}
 
-		private static bool parseArg(string fileName, out ulong? zoom, out ulong? tileCol, out ulong? tileRow) {
+		private static bool ParseArg(string fileName, out ulong? zoom, out ulong? tileCol, out ulong? tileRow) {
 			zoom = null;
 			tileCol = null;
 			tileRow = null;
@@ -101,22 +101,19 @@ namespace Mapbox.VectorTile {
 				return false;
 			}
 
-			ulong z;
-			if (!ulong.TryParse(zxy[0], out z)) {
+			if (!ulong.TryParse(zxy[0], out ulong z)) {
 				Console.WriteLine($"could not parse zoom: {zxy[0]}");
 				return false;
 			}
 			zoom = z;
 
-			ulong x;
-			if (!ulong.TryParse(zxy[1], out x)) {
+			if (!ulong.TryParse(zxy[1], out ulong x)) {
 				Console.WriteLine($"could not parse tileCol: {zxy[1]}");
 				return false;
 			}
 			tileCol = x;
 
-			ulong y;
-			if (!ulong.TryParse(zxy[2], out y)) {
+			if (!ulong.TryParse(zxy[2], out ulong y)) {
 				Console.WriteLine($"could not parse tileRow: {zxy[2]}");
 				return false;
 			}
