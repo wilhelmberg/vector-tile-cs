@@ -74,8 +74,9 @@ namespace Mapbox.VectorTile.ExtensionMethods {
 					string geojsonCoords = "";
 					string geomType = feat.GeometryType.Description();
 
-					//multipart
 					List<List<LatLng>> geomWgs84 = feat.GeometryAsWgs84(zoom, tileColumn, tileRow);
+
+					//multipart
 					if (geomWgs84.Count > 1) {
 						switch (feat.GeometryType) {
 							case GeomType.POINT:
@@ -92,10 +93,11 @@ namespace Mapbox.VectorTile.ExtensionMethods {
 								geomType = "MultiLineString";
 								List<string> parts = new();
 								foreach (var part in geomWgs84) {
-									parts.Add("[" + string.Join(
-									","
+									parts.Add(
+										"[" + string.Join(
+											","
 											, part.Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
-											) + "]");
+										) + "]");
 								}
 								geojsonCoords = string.Join(",", parts.ToArray());
 								break;
@@ -105,8 +107,8 @@ namespace Mapbox.VectorTile.ExtensionMethods {
 								foreach (var part in geomWgs84) {
 									partsMP.Add(
 										"[" + string.Join(
-										","
-										, part.Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
+											","
+											, part.Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
 										) + "]"
 									);
 								}
@@ -123,14 +125,14 @@ namespace Mapbox.VectorTile.ExtensionMethods {
 							case GeomType.LINESTRING:
 								geojsonCoords = string.Join(
 									","
-											, geomWgs84[0].Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
-										);
+									, geomWgs84[0].Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
+								);
 								break;
 							case GeomType.POLYGON:
 								geojsonCoords = "[" + string.Join(
 									","
-											, geomWgs84[0].Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
-										) + "]";
+									, geomWgs84[0].Select(g => string.Format(NumberFormatInfo.InvariantInfo, "[{0},{1}]", g.Lng, g.Lat)).ToArray()
+								) + "]";
 								break;
 							default:
 								break;
